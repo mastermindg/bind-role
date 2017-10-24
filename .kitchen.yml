@@ -20,15 +20,11 @@ platforms:
       #image: local/ansible:stretch
       #image: dramaturg/debian-systemd
       image: nishiki/ansible:stretch
-      command:
-        - apt remove -y ansible
-        - apt install -y python-pip
-        - pip install ansible
-        - /bin/systemd
+      command: /bin/systemd
       volume:
         - /sys/fs/cgroup:/sys/fs/cgroup:ro
       security_opt: seccomp=unconfined
       container_name: bind
 
 suites:
-  - name: bind
+  - name: bind-role

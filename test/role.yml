@@ -21,4 +21,4 @@
           - forwarded.example.org
 
   roles:
-    - bind
+    - bind-role

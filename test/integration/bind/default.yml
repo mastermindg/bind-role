@@ -21,4 +21,4 @@
         negative_cache: 300
 
   roles:
-      - bind
+      - bind-role
