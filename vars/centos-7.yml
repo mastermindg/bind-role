@@ -1,0 +1,12 @@
+---
+bind_config_basepath: /etc/named
+bind_conf_path: /etc
+bind_user: named
+bind_group: named
+bind_service_name: named
+nolocal: true
+bind_base_zones_path: /etc/named
+bind_pkgs:
+  - bind
+  - bind-utils
+  - python-dns

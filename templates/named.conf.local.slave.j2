@@ -1,0 +1,15 @@
+# {{ ansible_managed }}
+{% if bind_config_slave_zones %}
+{% for zone, value in bind_config_slave_zones.iteritems() %}
+
+zone "{{ zone }}" IN {
+	type slave;
+	file "{{bind_base_zones_path}}/slaves/db.{{ zone }}";
+  masters {
+{% for master in value.masters %}
+          {{ master }};
+{% endfor %}
+    };
+};
+{% endfor %}
+{% endif %}

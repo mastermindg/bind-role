@@ -1,0 +1,34 @@
+driver:
+  name: docker_cli
+
+transport:
+  name: docker_cli
+
+provisioner:
+  name: ansible_playbook
+  hosts: localhost
+  require_ansible_repo: false
+  require_ansible_omnibus: true
+  require_chef_for_busser: true
+  ansible_verbose: true
+  ansible_version: latest
+  ansible_inventory: ./test/integration/inventory
+
+platforms:
+  - name: debian-9
+    driver_config:
+      #image: local/ansible:stretch
+      #image: dramaturg/debian-systemd
+      image: nishiki/ansible:stretch
+      command:
+        - apt remove -y ansible
+        - apt install -y python-pip
+        - pip install ansible
+        - /bin/systemd
+      volume:
+        - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      security_opt: seccomp=unconfined
+      container_name: bind
+
+suites:
+  - name: bind

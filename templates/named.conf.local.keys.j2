@@ -1,0 +1,11 @@
+# {{ ansible_managed }}
+{% for zone, value in bind_config_master_zones.iteritems() %}
+{% if 'dnssec' in value and value.dnssec %}
+{% if item.item.key == zone %}
+key "{{ zone }}" {
+	 algorithm hmac-md5;
+	 secret "{{ item.stdout }}";
+};
+{% endif %}
+{% endif %}
+{% endfor %}

@@ -1,0 +1,32 @@
+;; {{ ansible_managed }}
+$TTL    3600
+@	IN	SOA	{{ ansible_hostname }}.{{ item.key }}. {{ item.value.mail|replace('@', '.') }}. (
+	{{ item.value.serial }} ; Serial
+  {{ item.value.refresh|default(14400) }} ; Refresh
+  {{ item.value.retry|default(86400) }} ; Retry
+  {{ item.value.expire|default(2419200) }} ; Expire
+  {{ item.value.negative_cache|default(86400) }} ; Negative Cache TTL
+)
+@	3600	IN	NS	{{ ansible_hostname }}.{{ item.key }}.
+{{ ansible_hostname }}	3600	IN	A	{{ ansible_eth0["ipv4"]["address"] }}
+
+{% if 'entries' in item.value %}
+{% for entry in item.value.entries %}
+{% if entry.type|upper == 'MX' %}
+{{ entry.name }}{% for i in range(0, 15 - entry.name|length) %} {% endfor %} IN MX {{ entry.priority }}     {{ entry.value }}
+{% elif entry.type|upper == 'TXT' %}
+{{ entry.name }}{% for i in range(0, 15 - entry.name|length) %} {% endfor %} IN  {{ entry.type|upper }}  (
+{% for charset in entry.value|batch(64) %}
+  "{{ charset|join('') }}"
+{% endfor %}
+)
+{% else %}
+{{ entry.name }}{% for i in range(0, 15 - entry.name|length) %} {% endfor %} IN {{ entry.type|upper }}{% for i in range(0, 9 - entry.type|length) %} {% endfor %} {{ entry.value }}
+{% endif %}
+{% endfor %}
+{% if 'dnssec' in item.value and item.value.dnssec %}
+
+$INCLUDE {{ item.key }}.key
+$INCLUDE {{ item.key }}-ksk.key
+{% endif %}
+{% endif %}

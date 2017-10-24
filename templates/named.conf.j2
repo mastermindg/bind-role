@@ -1,0 +1,52 @@
+// This is the primary configuration file for the BIND DNS server named.
+//
+// Please read /usr/share/doc/bind9/README.Debian.gz for information on the
+// structure of BIND configuration files in Debian, *BEFORE* you customize
+// this configuration file.
+//
+// If you are just adding zones, please do that in /etc/bind/named.conf.local
+
+include "{{ bind_base_zones_path }}/named.conf.options";
+
+{% if bind_locals == true %}
+
+// prime the server with knowledge of the root servers
+zone "." {
+        type hint;
+        file "{{ bind_base_zones_path }}/db.root";
+};
+
+// be authoritative for the localhost forward and reverse zones, and for
+// broadcast zones as per RFC 1912
+
+zone "localhost" {
+        type master;
+        file "{{ bind_base_zones_path }}/db.local";
+};
+
+zone "127.in-addr.arpa" {
+        type master;
+        file "{{ bind_base_zones_path }}/db.127";
+};
+
+zone "0.in-addr.arpa" {
+        type master;
+        file "{{ bind_base_zones_path }}/db.0";
+};
+
+zone "255.in-addr.arpa" {
+        type master;
+        file "{{ bind_base_zones_path }}/db.255";
+};
+
+{% endif %}
+
+{% for zone, value in bind_config_master_zones.iteritems() %}
+{% if 'dnssec' in value and value.dnssec %}
+include "{{ bind_base_zones_path }}/named.conf.local.keys.{{ zone }}";
+{% endif %}
+{% endfor %}
+
+include "{{ bind_base_zones_path }}/named.conf.local.master";
+include "{{ bind_base_zones_path }}/named.conf.local.slave";
+include "{{ bind_base_zones_path }}/named.conf.local.forward";

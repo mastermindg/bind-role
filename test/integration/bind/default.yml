@@ -1,0 +1,24 @@
+- hosts: localhost
+  connection: local
+  vars:
+    bind_config_recursion: yes
+    bind_config_master_zones:
+      example.org:
+        dnssec: yes
+        mail: ops.example.org
+        serial: 2017092200
+        refresh: 3600
+        retry: 1800
+        expire: 2419200
+        negative_cache: 300
+      example.com:
+        dnssec: yes
+        mail: ops.example.com
+        serial: 2017102200
+        refresh: 3600
+        retry: 1800
+        expire: 2419200
+        negative_cache: 300
+
+  roles:
+      - bind

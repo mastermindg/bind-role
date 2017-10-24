@@ -1,0 +1,13 @@
+---
+bind_config_basepath: /etc/bind
+bind_conf_path: /etc/bind
+bind_user: bind
+bind_group: bind
+bind_service_name: bind9
+nolocal: false
+#bind_base_zones_path: "/var/lib/bind"
+bind_base_zones_path: "/etc/bind"
+bind_pkgs:
+  - bind9
+  - dnsutils
+  - python-dnspython

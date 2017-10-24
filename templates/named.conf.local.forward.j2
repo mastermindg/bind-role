@@ -1,0 +1,19 @@
+# {{ ansible_managed }}
+{% if bind_config_forward_zones %}
+{% for zone, value in bind_config_forward_zones.iteritems() %}
+
+zone "{{ zone }}" IN {
+	type forward;
+{% if value.forward is defined %}
+    forward {{ value.forward }}; 
+{% else %}
+    forward only;
+{% endif %}
+    forwarders {
+{% for fwder in value.forwarders %}
+          {{ fwder }};
+{% endfor %}
+    };
+};
+{% endfor %}
+{% endif %}
